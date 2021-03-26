@@ -24,6 +24,7 @@ function plot_trajectory(name, time, trajectories)
         xlabel("time [s]");
         ylabel("position [rad]");
         title("Position Plot");
+        xlim([time(1) time(end)]);
     end
     
     if p > 1
@@ -32,6 +33,7 @@ function plot_trajectory(name, time, trajectories)
         xlabel("time [s]");
         ylabel("velocity [rad/q]");
         title("Veloctiy Plot");
+        xlim([time(1) time(end)]);
     end
     
     if p > 2
@@ -40,6 +42,7 @@ function plot_trajectory(name, time, trajectories)
         xlabel("time [s]");
         ylabel("acceleration [rad/q^2]");
         title('Acceleration Plot');
+        xlim([time(1) time(end)]);
     end
     
     if p > 3
@@ -48,6 +51,7 @@ function plot_trajectory(name, time, trajectories)
         xlabel("time [s]");
         ylabel("jerk [rad/q^3]");
         title('Jerk Plot');
+        xlim([time(1) time(end)]);
     end
     
     if p > 4
@@ -56,5 +60,6 @@ function plot_trajectory(name, time, trajectories)
         xlabel("time [s]");
         ylabel("snap [rad/q^4]");
         title('Snap Plot');
+        xlim([time(1) time(end)]);
     end
 end
