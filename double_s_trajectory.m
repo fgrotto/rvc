@@ -1,4 +1,11 @@
-function [q,d_q,dd_q,ddd_q,tf] = double_s_trajectory(qi_d,qf_d,d_qi_d,d_qf_d,vd_max,vd_min,ad_max,ad_min,jd_max,jd_min,ti,Ts)
+%% double_s_trajectory.m
+%  double_s_trajectory implements double s trajectory taking into account
+%  all possible scenario (returning an error in case of invalid
+%  constraints). If delta_T is not NaN it will be considered as a special
+%  case (fixed duration) and alfa and beta will be considered as well.
+%  Output:
+%         - returns all trajectories (pos,vel,acc,jerk) and computed tf
+function [q,d_q,dd_q,ddd_q,tf] = double_s_trajectory(qi_d,qf_d,d_qi_d,d_qf_d,vd_max,vd_min,ad_max,ad_min,jd_max,jd_min,delta_T,alfa,beta,ti,Ts)
     % Calculate sigma for sign flip
     sigma = sign(qf_d-qi_d);
 
@@ -8,13 +15,41 @@ function [q,d_q,dd_q,ddd_q,tf] = double_s_trajectory(qi_d,qf_d,d_qi_d,d_qf_d,vd_
     d_qi = sigma * d_qi_d;
     d_qf = sigma * d_qf_d;
 
-    % Calculate the correct values for contrains
+    % Calculate the correct values for contraints
     d_qmax = (sigma+1)/2*vd_max + (sigma-1)/2*vd_min;
-    d_qmin = (sigma+1)/2*vd_min + (sigma-1)/2*vd_max;
+    % d_qmin = (sigma+1)/2*vd_min + (sigma-1)/2*vd_max;
     dd_qmax = (sigma+1)/2*ad_max + (sigma-1)/2*ad_min;
-    dd_qmin = (sigma+1)/2*ad_min + (sigma-1)/2*ad_max;
+    % dd_qmin = (sigma+1)/2*ad_min + (sigma-1)/2*ad_max;
     ddd_qmax = (sigma+1)/2*jd_max + (sigma-1)/2*jd_min;
     ddd_qmin = (sigma+1)/2*jd_min + (sigma-1)/2*jd_max;
+
+    % Case 3: Fixed duration provided (with alfa and beta params)
+    if not(isnan(delta_T))
+      assert(alfa>0 && alfa<=1/2, "alfa params 0<alfa<=1/2")
+      assert(beta>0 && beta<=1/2, "beta params 0<beta<=1/2")
+      ta = alfa*delta_T;
+      td = ta;
+      Tj1 = beta*ta;
+      Tj2 = Tj1;
+      d_qmax = (qf-qi)/((1-alfa)*delta_T);
+      dd_qmax = (qf-qi)/(alfa*(1-alfa)*(1-beta)*delta_T^2);
+      ddd_qmax = (qf-qi)/(alfa^2*beta*(1-alfa)*(1-beta)*delta_T^3);
+      ddd_qmin = -ddd_qmax;
+    end
+    
+    % Feasibility conditions
+    cond1 = sqrt(abs(d_qf-d_qi)/ddd_qmax);
+    cond2 = dd_qmax/ddd_qmax;
+    if cond1 < cond2
+        tj = cond1;
+    else
+        tj = cond2;
+    end
+    if tj < cond2
+        assert((qf-qi)>(tj*(d_qi+d_qf)),"tj < dd_qmax/ddd_qmax: feasibility condition not satisfied");
+    elseif tj == cond2
+        assert((qf-qi)>1/2*((d_qi+d_qf)*(tj+(d_qf-d_qi)/ddd_qmax)),"tj == dd_qmax/ddd_qmax: feasibility condition not satisfied");
+    end
 
     % We start looking for case 1 since we will be able to move to
     % case 2 in case of tv <= 0
@@ -62,11 +97,12 @@ function [q,d_q,dd_q,ddd_q,tf] = double_s_trajectory(qi_d,qf_d,d_qi_d,d_qf_d,vd_
     assert(isreal(ta), "ta: is not a real number: change limit values");
     assert(isreal(td), "td: is not a real number: change limit values");
 
+    % Computation section
     % Compute acceleration limits
-    dd_qlima = ddd_qmax * Tj1;
+    dd_qlima = ddd_qmax*Tj1;
     dd_qlimd = -ddd_qmax*Tj2;
     d_qlim = d_qi + (ta-Tj1)*dd_qlima; % Same as d_qlim=d_qf-(td-Tj2)*dd_qlimd
-
+        
     % Compute total duration (tf)
     duration=ta+tv+td;
     % Compute final time of the trajectory
