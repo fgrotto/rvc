@@ -4,7 +4,7 @@ d_qi_d = 0;
 d_qf_d = 0;
 ti = 0;
 Ts = 0.001;
-delta_T = NaN; %5
+delta_T = 5; %5
 alfa = 1/3;
 beta = 1/5;
 

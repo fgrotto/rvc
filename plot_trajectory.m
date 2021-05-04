@@ -6,7 +6,7 @@
 %         - trajectories matrix pxn where p is the number of trajectories (position, 
 %             velocities, accelerations, jerk, snap) and n is the samples
 %             in the corresponding trajectories (ex, [q; d_q; ddd_q])
-function plot_trajectory(name, time, trajectories,) % vd_max, ad_max, jd_max)
+function plot_trajectory(name, time, trajectories) % vd_max, ad_max, jd_max)
     [p,~] = size(trajectories);
     
     plot_number = 321;
@@ -16,7 +16,7 @@ function plot_trajectory(name, time, trajectories,) % vd_max, ad_max, jd_max)
     if p == 3
        plot_number = 311;
     end
-      
+    
     if p > 0
         figure('Name', name);
         subplot(plot_number);

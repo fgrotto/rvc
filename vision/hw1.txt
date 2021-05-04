@@ -1,0 +1,19 @@
+Public dataset with range images
+
+https://www.lidarusa.com/sample-data.html#
+Provided during the lecture
+
+http://make3d.cs.cornell.edu/data.html
+2 datasets with traning and test images (make 3d laser + image data)
+
+http://www.eng.usf.edu/cvprg/range/DataBase.html
+Over 400 images registered using 4 different range cameras
+
+https://vip.unist.ac.kr/large-scale-3d-point-clouds-dataset-for-virtual-point-removal
+11 large-scale 3D point clouds captured with a terrestrial LiDAR scanner for reflection removal
+
+Long list of public datasets about different types of images
+https://homepages.inf.ed.ac.uk/rbf/CVonline/Imagedbase.htm
+
+Other list of dataset useful for computer vision projects
+https://lesc.dinfo.unifi.it/en/datasets
