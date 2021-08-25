@@ -6,11 +6,12 @@ tk = [0 2 8 12 15 20];
 
 dqi = 0;
 dqf = 0;
+Ts = 0.01;
 
 mu = 0.1;
 wk = [0 1 5 10 1 1];
 
-[q,dq,ddq,ts] = cubic_trajectory_multipoint_smooth(qk,tk,mu,wk);
+[q,dq,ddq,ts] = cubic_trajectory_multipoint_smooth(qk,tk,mu,wk,Ts);
 % [q,dq,ddq,ts] = cubic_trajectory_multipoint_acc(qk,tk,dqi,dqf);
 
 figure;

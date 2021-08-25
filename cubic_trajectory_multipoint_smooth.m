@@ -1,4 +1,4 @@
-function [q,dq,ddq,ts] = cubic_trajectory_multipoint_smooth(qk,tk,mu,wk)
+function [q,dq,ddq,ts] = cubic_trajectory_multipoint_smooth(qk,tk,mu,wk, Ts)
     if size(qk)~=size(tk)
         error("points and time values should have the same length");
     end
@@ -26,7 +26,7 @@ function [q,dq,ddq,ts] = cubic_trajectory_multipoint_smooth(qk,tk,mu,wk)
         A2(i) = Tk(i);
     end
 
-    A = zeros(6);
+    A = zeros(n+1);
     for i = 1:n
         A(i,i) = Ad(i);
         if i == 1
@@ -71,8 +71,7 @@ function [q,dq,ddq,ts] = cubic_trajectory_multipoint_smooth(qk,tk,mu,wk)
         a3(k) = (dds(k+1)-dds(k))/(6*Tk(k));
     end
 
-    sample = 0.01;
-    ts = tk(1):sample:tk(n+1);
+    ts = tk(1):Ts:tk(n+1);
 
     j = 1;
     tj = 2;
